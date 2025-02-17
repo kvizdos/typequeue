@@ -1,0 +1,5 @@
+**/secret.tfvars
+**/.terraform**
+**/bootstrap.zip
+**/*.tfstate
+**/*.tfstate.backup
