@@ -1,6 +1,8 @@
 # TypeQueue
 A generic, type-safe AWS SQS wrapper for Go that provides both production implementations for dispatching and consuming messages as well as mock implementations for testing.
 
+[![Go Test](https://github.com/kvizdos/typequeue/actions/workflows/test.yaml/badge.svg)](https://github.com/kvizdos/typequeue/actions/workflows/test.yaml)
+
 ## Overview
 TypeQueue is designed to let you:
 
