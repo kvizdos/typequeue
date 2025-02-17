@@ -147,7 +147,8 @@ Simply replace your general `Consumer` with the Lambda-specific consumer:
 
 Check out the demo code in `cmd/lambda_consumer_demo` for more details.
 
-**When using in Lambda mode, it is critical that your function runs in "ReportBatchItemFailures" mode. There is example Terraform code in the above directory as well :)
+> [!WARNING]
+> **When using in Lambda mode, it is critical that your function runs in "ReportBatchItemFailures" mode.** There is example Terraform code in the above directory as well :)
 
 ## Coding without interacting with SQS
 
