@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	typequeue "github.com/kvizdos/typequeue/pkg"
+	"github.com/sirupsen/logrus"
 )
 
 type LambdaConsumer[T typequeue.SQSAbleMessage] struct {
@@ -48,15 +49,19 @@ func (m *LambdaConsumer[T]) Consume(ctx context.Context, opts typequeue.Consumer
 			continue
 		}
 
+		logger := m.Logger
 		// Set metadata on the message (e.g., receipt and trace IDs)
 		unmarshaled.SetReceiptID(&record.ReceiptHandle)
 		if traceAttr, ok := record.MessageAttributes["X-Trace-ID"]; ok && traceAttr.StringValue != nil {
+			if _, ok := logger.(*logrus.Logger); ok {
+				logger = logger.(*logrus.Logger).WithField("trace-id", *traceAttr.StringValue)
+			}
 			unmarshaled.SetTraceID(traceAttr.StringValue)
 		}
 
 		// Process the message
 		if err := processFunc(unmarshaled); err != nil {
-			m.Logger.Errorf("typequeue: error processing message: %v", err)
+			logger.Errorf("typequeue: error processing message: %v", err)
 			m.Reject(&record.MessageId)
 			continue
 		}

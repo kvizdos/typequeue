@@ -7,7 +7,7 @@ type TypeQueueDispatcher[T SQSAbleMessage] interface {
 	Dispatch(ctx context.Context, event T, targetQueueParameter string, withDelaySeconds ...int64) (*string, error)
 }
 
-type TypeQueueProcessingFunc[T SQSAbleMessage] func(msgs T) error
+type TypeQueueProcessingFunc[T SQSAbleMessage] func(msg T) error
 
 type TypeQueueConsumer[T SQSAbleMessage] interface {
 	Consume(ctx context.Context, opts ConsumerSQSOptions, processFunc TypeQueueProcessingFunc[T]) error
