@@ -27,7 +27,7 @@ type TypeQueueSSMHelper struct {
 	SSM SSMClient
 }
 
-func (t TypeQueueSSMHelper) Connect() error {
+func (t *TypeQueueSSMHelper) Connect() error {
 	if t.SSM != nil {
 		return nil // don't reconnect -- very helpful in Lambdaland
 	}
