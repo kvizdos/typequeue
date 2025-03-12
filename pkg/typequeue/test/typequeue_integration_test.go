@@ -297,3 +297,106 @@ func TestDispatchAndConsumeReject(t *testing.T) {
 	}
 
 }
+
+func TestIntegrationBatchedDispatchAndConsume(t *testing.T) {
+	// Skip integration tests if running in short mode.
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
+	ctx := context.Background()
+	container, endpoint, err := createLocalStack(ctx)
+	assert.NoError(t, err, "expected no error starting LocalStack")
+	defer container.Terminate(ctx)
+
+	// Create an AWS session that talks to LocalStack.
+	sess, err := session.NewSession(&aws.Config{
+		Region:      aws.String("us-east-1"),
+		Endpoint:    aws.String(endpoint),
+		Credentials: credentials.NewStaticCredentials("test", "test", ""),
+	})
+	assert.NoError(t, err, "expected no error creating AWS session")
+	sqsClient := sqs.New(sess)
+
+	// Create an SQS queue.
+	createOut, err := sqsClient.CreateQueue(&sqs.CreateQueueInput{
+		QueueName: aws.String("batched-test-queue"),
+	})
+	assert.NoError(t, err, "expected no error creating SQS queue")
+	queueURL := *createOut.QueueUrl
+
+	logger := &TestLogger{
+		Test: t,
+	}
+	// Instantiate the BatchedDispatcher.
+	// Use a buffer size large enough to hold all messages and set max concurrent calls (here, 5).
+	dispatcher := typequeue.NewBatchedDispatcher[*TestMessage](ctx, logger, sqsClient, func(target string) (string, error) {
+		return queueURL, nil
+	}, 200, 5)
+
+	// Dispatch 108 messages.
+	totalMessages := 108
+	for i := range totalMessages {
+		msgContent := fmt.Sprintf("Batched Message %d", i)
+		msg := &TestMessage{Message: msgContent}
+		// Use a context with a valid trace-id.
+		dispatchCtx := context.WithValue(context.Background(), "trace-id", "batch-trace")
+		_, err := dispatcher.Dispatch(dispatchCtx, msg, queueURL)
+		assert.NoError(t, err, "expected no error dispatching message")
+	}
+
+	// Flush the dispatcher so any partial batch is delivered.
+	dispatcher.Flush()
+
+	// Set up the Consumer.
+	consumer := typequeue.Consumer[*TestMessage]{
+		SQSClient: sqsClient,
+		Logger:    logger,
+		GetTargetQueueURL: func(target string) (string, error) {
+			return queueURL, nil
+		},
+	}
+
+	// Set up a WaitGroup to wait until all messages are consumed.
+	var wg sync.WaitGroup
+	wg.Add(totalMessages)
+
+	receivedMessages := make([]*TestMessage, 0, totalMessages)
+	var mu sync.Mutex
+
+	consumerOptions := typequeue.ConsumerSQSOptions{
+		TargetQueue:         queueURL,
+		MaxNumberOfMessages: 10,
+		WaitTimeSeconds:     5,
+	}
+
+	// Start the consumer in its own goroutine.
+	ctxConsume, cancel := context.WithCancel(ctx)
+	defer cancel()
+	go func() {
+		consumer.Consume(ctxConsume, consumerOptions, func(received *TestMessage) error {
+			mu.Lock()
+			receivedMessages = append(receivedMessages, received)
+			mu.Unlock()
+			wg.Done()
+			return nil
+		})
+	}()
+
+	// Wait for all messages to be consumed, with a timeout.
+	doneCh := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(doneCh)
+	}()
+
+	select {
+	case <-doneCh:
+		// All messages processed.
+	case <-time.After(30 * time.Second):
+		t.Fatal("timed out waiting for all messages to be consumed")
+	}
+
+	// Assert that exactly 108 messages were consumed.
+	assert.Equal(t, totalMessages, len(receivedMessages), "expected to receive 108 messages")
+}

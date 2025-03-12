@@ -4,9 +4,14 @@ import "github.com/aws/aws-sdk-go/service/sqs"
 
 // fakeSQSClient implements just enough of the SQS API for our tests.
 type fakeSQSClient struct {
-	SendMessageFn    func(*sqs.SendMessageInput) (*sqs.SendMessageOutput, error)
-	ReceiveMessageFn func(*sqs.ReceiveMessageInput) (*sqs.ReceiveMessageOutput, error)
-	DeleteMessageFn  func(queueURL *string, receiptHandle *string) error
+	SendMessageFn      func(*sqs.SendMessageInput) (*sqs.SendMessageOutput, error)
+	ReceiveMessageFn   func(*sqs.ReceiveMessageInput) (*sqs.ReceiveMessageOutput, error)
+	SendMessageBatchFn func(*sqs.SendMessageBatchInput) (*sqs.SendMessageBatchOutput, error)
+	DeleteMessageFn    func(queueURL *string, receiptHandle *string) error
+}
+
+func (f *fakeSQSClient) SendMessageBatch(input *sqs.SendMessageBatchInput) (*sqs.SendMessageBatchOutput, error) {
+	return f.SendMessageBatchFn(input)
 }
 
 func (f *fakeSQSClient) SendMessage(input *sqs.SendMessageInput) (*sqs.SendMessageOutput, error) {
