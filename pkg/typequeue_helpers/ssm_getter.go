@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ssm"
-	typequeue "github.com/kvizdos/typequeue/pkg"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
 )
 
 type SSMClient interface {

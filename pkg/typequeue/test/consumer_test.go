@@ -10,7 +10,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
-	typequeue "github.com/kvizdos/typequeue/pkg"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
 	"github.com/stretchr/testify/assert"
 )
 

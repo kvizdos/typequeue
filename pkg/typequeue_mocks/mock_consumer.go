@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	typequeue "github.com/kvizdos/typequeue/pkg"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
 )
 
 type MockConsumer[T typequeue.SQSAbleMessage] struct {

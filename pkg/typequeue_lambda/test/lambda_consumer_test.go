@@ -7,12 +7,12 @@ import (
 	"testing"
 
 	"github.com/aws/aws-lambda-go/events"
-	tq "github.com/kvizdos/typequeue/pkg"
-	typequeue_lambda "github.com/kvizdos/typequeue/pkg/lambda"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
+	"github.com/kvizdos/typequeue/pkg/typequeue_lambda"
 )
 
 type TestMessage struct {
-	tq.SQSAble
+	typequeue.SQSAble
 	Content string `json:"content"`
 }
 
@@ -52,7 +52,7 @@ func TestConsume_UnmarshalError(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err := consumer.Consume(ctx, tq.ConsumerSQSOptions{}, processFunc)
+	err := consumer.Consume(ctx, typequeue.ConsumerSQSOptions{}, processFunc)
 	if err != nil {
 		t.Fatalf("Consume returned unexpected error: %v", err)
 	}
@@ -102,7 +102,7 @@ func TestConsume_ProcessError(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = consumer.Consume(ctx, tq.ConsumerSQSOptions{}, processFunc)
+	err = consumer.Consume(ctx, typequeue.ConsumerSQSOptions{}, processFunc)
 	if err != nil {
 		t.Fatalf("Consume returned unexpected error: %v", err)
 	}
@@ -159,7 +159,7 @@ func TestConsume_Success(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	err = consumer.Consume(ctx, tq.ConsumerSQSOptions{}, processFunc)
+	err = consumer.Consume(ctx, typequeue.ConsumerSQSOptions{}, processFunc)
 	if err != nil {
 		t.Fatalf("Consume returned unexpected error: %v", err)
 	}

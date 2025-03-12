@@ -6,8 +6,8 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	typequeue "github.com/kvizdos/typequeue/pkg"
-	typequeue_lambda "github.com/kvizdos/typequeue/pkg/lambda"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
+	"github.com/kvizdos/typequeue/pkg/typequeue_lambda"
 	"github.com/sirupsen/logrus"
 )
 

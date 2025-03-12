@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	typequeue "github.com/kvizdos/typequeue/pkg"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
 )
 
 type MockDispatcher[T typequeue.SQSAbleMessage] struct {

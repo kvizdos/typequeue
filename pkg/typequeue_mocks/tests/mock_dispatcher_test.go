@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	typequeue "github.com/kvizdos/typequeue/pkg"
-	typequeue_mocks "github.com/kvizdos/typequeue/pkg/mocked"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
+	"github.com/kvizdos/typequeue/pkg/typequeue_mocks"
 	"github.com/stretchr/testify/assert"
 )
 

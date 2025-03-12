@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/events"
-	typequeue "github.com/kvizdos/typequeue/pkg"
+	"github.com/kvizdos/typequeue/pkg/typequeue"
 	"github.com/sirupsen/logrus"
 )
 
