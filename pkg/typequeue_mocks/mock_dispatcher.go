@@ -13,6 +13,8 @@ type MockDispatcher[T typequeue.SQSAbleMessage] struct {
 	DispatchChan chan T // Optional channel for live testing
 }
 
+func (m *MockDispatcher[T]) Flush() {}
+
 func (m *MockDispatcher[T]) Dispatch(ctx context.Context, event T, targetQueueParameter string, withDelaySeconds ...int64) (*string, error) {
 	var traceID string
 	if tid, ok := ctx.Value("trace-id").(string); !ok {

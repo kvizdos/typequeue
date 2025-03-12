@@ -13,6 +13,7 @@ import (
 )
 
 var _ typequeue.TypeQueueDispatcher[*TestMessage] = &typequeue_mocks.MockDispatcher[*TestMessage]{}
+var _ typequeue.TypeQueueBatchDispatcher[*TestMessage] = &typequeue_mocks.MockDispatcher[*TestMessage]{}
 
 // TestDispatchWithoutChannel verifies that Dispatch stores the message in the map when DispatchChan is nil.
 func TestDispatchWithoutChannel(t *testing.T) {

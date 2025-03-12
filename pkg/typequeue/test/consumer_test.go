@@ -14,6 +14,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var _ typequeue.TypeQueueConsumer[*TestMessage] = &typequeue.Consumer[*TestMessage]{}
+
 // For Consumer tests we will simulate a single ReceiveMessage call.
 func TestConsumerConsumeSuccess(t *testing.T) {
 	traceID := "test-trace-id"

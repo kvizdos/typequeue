@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var _ typequeue.TypeQueueDispatcher[*TestMessage] = &typequeue.Dispatcher[*TestMessage]{}
+
 func TestDispatcherDispatchMissingTraceID(t *testing.T) {
 	// Create a fake SQS client that never gets called.
 	fakeClient := &fakeSQSClient{

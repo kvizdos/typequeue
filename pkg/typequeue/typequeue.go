@@ -7,6 +7,12 @@ type TypeQueueDispatcher[T SQSAbleMessage] interface {
 	Dispatch(ctx context.Context, event T, targetQueueParameter string, withDelaySeconds ...int64) (*string, error)
 }
 
+type TypeQueueBatchDispatcher[T SQSAbleMessage] interface {
+	// ctx must have a TraceID
+	Dispatch(ctx context.Context, event T, targetQueueParameter string, withDelaySeconds ...int64) (*string, error)
+	Flush()
+}
+
 type TypeQueueProcessingFunc[T SQSAbleMessage] func(msg T) error
 
 type TypeQueueConsumer[T SQSAbleMessage] interface {

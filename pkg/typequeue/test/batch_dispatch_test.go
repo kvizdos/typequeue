@@ -12,9 +12,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestBatchedDispatcherFlushOnCancel verifies that if a partial batch exists (less than 10 messages),
+var _ typequeue.TypeQueueBatchDispatcher[*TestMessage] = &typequeue.BatchedDispatcher[*TestMessage]{}
+
+// TestBatchedDispatcherFlush verifies that if a partial batch exists (less than 10 messages),
 // canceling the context flushes the remaining messages.
-func TestBatchedDispatcherFlushOnCancel(t *testing.T) {
+func TestBatchedDispatcherFlush(t *testing.T) {
 	var mu sync.Mutex
 	deliveredMessages := 0
 
