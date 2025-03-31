@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -24,6 +25,7 @@ type Dispatcher[T SQSAbleMessage] struct {
 func (p Dispatcher[T]) Dispatch(ctx context.Context, event T, targetQueue string, withDelaySeconds ...int64) (*string, error) {
 	traceID, ok := ctx.Value("trace-id").(string)
 
+	log.Println(traceID, ok)
 	if !ok {
 		return nil, fmt.Errorf("typequeue: missing trace-id")
 	}
