@@ -2,7 +2,6 @@ package typequeue
 
 import (
 	"context"
-	"log"
 	"sync"
 )
 
@@ -46,7 +45,6 @@ func (b *AsyncDispatcher[T]) startDispatchListener() {
 		select {
 		case msg := <-b.msgChan:
 			dispatchCtx := context.WithValue(context.Background(), "trace-id", *msg.GetTraceID())
-			log.Println("Set traceID", dispatchCtx.Value("trace-id"))
 			_, err := b.Dispatcher.Dispatch(dispatchCtx, msg, b.TargetQueue)
 			if err == nil {
 				continue
@@ -62,7 +60,6 @@ func (b *AsyncDispatcher[T]) startDispatchListener() {
 				select {
 				case msg := <-b.msgChan:
 					dispatchCtx := context.WithValue(context.Background(), "trace-id", *msg.GetTraceID())
-					log.Println("Flushing: Set traceID", dispatchCtx.Value("trace-id"))
 					_, err := b.Dispatcher.Dispatch(dispatchCtx, msg, b.TargetQueue)
 					if err != nil {
 						b.failedMsgChan <- FailedMessage[T]{
